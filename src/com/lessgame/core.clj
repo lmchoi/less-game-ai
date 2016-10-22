@@ -1,7 +1,5 @@
 (ns com.lessgame.core
-  (:gen-class))
+  (:require [com.lessgame.ai.gamer :as gamer]))
 
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
+(defn -main "Play LESS" [& args]
+  (gamer/start-playing))
