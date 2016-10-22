@@ -26,3 +26,7 @@
 
 (defn parse-instructions [instruction]
   (map parse-move (re-seq #"\D\d\D\d" instruction)))
+
+(defn translate [move]
+  "b1b2"
+  )
