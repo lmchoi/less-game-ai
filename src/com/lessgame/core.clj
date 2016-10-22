@@ -1,4 +1,4 @@
-(ns less-game-ai.core
+(ns com.lessgame.core
   (:gen-class))
 
 (defn -main
