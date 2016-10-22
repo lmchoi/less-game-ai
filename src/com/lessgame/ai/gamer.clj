@@ -1,5 +1,5 @@
 (ns com.lessgame.ai.gamer
-  (:require [com.lessgame.reader.game-reader :as gr]))
+  (:require [com.lessgame.game-engine :as gr]))
 
 (def ORDER_OF_PLAY [:yellow :black :white :red])
 
@@ -20,11 +20,7 @@
     (play-turn)
     (watch)))
 
-(defn start-playing []
-  (let [board-str   (read-line)
-        player-str  (read-line)
-        state       (gr/read-game board-str player-str)]
-
-    (loop [turns  (cycle ORDER_OF_PLAY)]
-      (when (process-turn state (first turns))
-        (recur (rest turns))))))
+(defn start-playing [state]
+  (loop [turns  (cycle ORDER_OF_PLAY)]
+    (when (process-turn state (first turns))
+      (recur (rest turns)))))

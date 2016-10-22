@@ -1,5 +1,7 @@
 (ns com.lessgame.core
-  (:require [com.lessgame.ai.gamer :as gamer]))
+  (:require [com.lessgame.game-engine :as game]
+            [com.lessgame.ai.gamer :as player]))
 
 (defn -main "Play LESS" [& args]
-  (gamer/start-playing))
+  (-> game/init
+      player/start-playing))
