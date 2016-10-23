@@ -34,13 +34,13 @@
 
 ; --- Public for testing only... yiks... ---
 
-(defn update-state [{:keys [y-pieces] :as state}
+(defn update-state [{:keys [yellow] :as state}
                     {:keys [pos move]}]
   (let [action    (ACTION_FOR_MOVE move)
         start-pos ((ACTION_FOR_MOVE :get) pos)
         end-pos   (action start-pos)]
     (assoc state
-      :y-pieces (bit-or (bit-xor y-pieces start-pos) end-pos))))
+      :yellow (bit-or (bit-xor yellow start-pos) end-pos))))
 
 (defn start-playing [s]
   (loop [state s

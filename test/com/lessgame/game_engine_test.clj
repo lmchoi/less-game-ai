@@ -18,7 +18,7 @@
                  :move :left}
       state {:board  "0000"
              :player :yellow}
-      pieces-at #(assoc state :y-pieces %)]
+      pieces-at #(assoc state :yellow %)]
   (facts "update the state to reflect a piece has been moved"
          (tabular
            (fact "move must indicate the direction"

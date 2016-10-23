@@ -15,6 +15,7 @@
       (recur (inc i) (str r "   " (HORIZONTAL_SEPARATOR (nth walls i))))
       (str r "\n"))))
 
+; TODO-MC show pieces
 (defn- draw-row [walls num-of-vertical-walls]
   (loop [i 0
          r "."]
@@ -29,26 +30,8 @@
     (draw-fn (take length board-in-progress) length)))
 
 (defn print-board [{:keys [board size] :or {size 8} }]
-  (let [demo-board
-        (str "b   b | .   .   .   .   r   r\n"
-             "    -                       =\n"
-             "b   b   .   .   . | .   r | r\n"
-             "        -   =   -   -        \n"
-             ".   . | . | .   .   .   .   .\n"
-             "    -           -            \n"
-             ".   . | .   . | .   .   .   .\n"
-             "                            -\n"
-             ".   .   .   . | . | .   . | .\n"
-             "    -               -        \n"
-             ". | .   .   .   .   . | .   .\n"
-             "                             \n"
-             "y   y   .   .   . | .   w   w\n"
-             "            -       -       -\n"
-             "y | y   .   . | .   . | w   w\n"
-             )
-        board-seq (seq board)
+  (let [board-seq (seq board)
         num-of-vertical-walls (- size 1)]
-
     (loop [is-separator?      false
            board-to-display   ""
            board-in-progress  board-seq]
@@ -58,5 +41,4 @@
               row-to-display  (draw is-separator? board-in-progress length)]
           (recur (not is-separator?)
                  (str board-to-display row-to-display)
-                 (drop length board-in-progress)))))
-    ))
+                 (drop length board-in-progress)))))))
