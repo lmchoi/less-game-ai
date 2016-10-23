@@ -2,6 +2,8 @@
   (:require [com.lessgame.reader.move-reader :as mr]
             [midje.sweet :refer :all]))
 
+;TODO-MC tidy tests in move reader
+;TODO-MC jump support?
 (fact "parse one instruction to move to the right for 2x2 board"
       (mr/parse-instructions "b1b2") => [{:pos  2
                                           :move :right}])

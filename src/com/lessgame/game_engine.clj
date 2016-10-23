@@ -6,6 +6,7 @@
 
 (def ORDER_OF_PLAY [:yellow :black :white :red])
 
+; TODO-MC need to support 8 soon!
 (def BOARD_WIDTH 2)
 (def ACTION_FOR_MOVE {:left   #(bit-shift-right % 1)
                       :right  #(bit-shift-left % 1)
