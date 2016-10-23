@@ -30,36 +30,36 @@
                  ".   .\n")]
         (ds/print-board {:board "0100" :size 2}) => expected-board))
 
-;(fact "print empty board"
-;      (let [expected-board
-;            (str ".   .   .\n"
-;                 "         \n"
-;                 ".   .   .\n"
-;                 "         \n"
-;                 ".   .   .\n")
-;            board-str "000000000000"]
-;        (ds/print-board {:board board-str :size 3}) => expected-board))
+(fact "print empty board"
+      (let [expected-board
+            (str ".   .   .\n"
+                 "         \n"
+                 ".   .   .\n"
+                 "         \n"
+                 ".   .   .\n")
+            board-str "000000000000"]
+        (ds/print-board {:board board-str :size 3}) => expected-board))
 
-;
-;(fact "print empty board"
-;      (let [expected-board
-;            (str "b   b | .   .   .   .   r   r\n"
-;                 "    -                       =\n"
-;                 "b   b   .   .   . | .   r | r\n"
-;                 "        -   =   -   -        \n"
-;                 ".   . | . | .   .   .   .   .\n"
-;                 "    -           -            \n"
-;                 ".   . | .   . | .   .   .   .\n"
-;                 "                            -\n"
-;                 ".   .   .   . | . | .   . | .\n"
-;                 "    -               -        \n"
-;                 ". | .   .   .   .   . | .   .\n"
-;                 "                             \n"
-;                 "y   y   .   .   . | .   w   w\n"
-;                 "            -       -       -\n"
-;                 "y | y   .   . | .   . | w   w\n")
-;            board-str "0100000010000020000101001211000110000010010000101000000000010001101010001001000010000000000000100000101011001010"]
-;        (ds/print-board {:board board-str :size 8}) => expected-board))
+
+(fact "print empty board"
+      (let [expected-board
+            (str ".   . | .   .   .   .   .   .\n"
+                 "    -                       =\n"
+                 ".   .   .   .   . | .   . | .\n"
+                 "        -   =   -   -        \n"
+                 ".   . | . | .   .   .   .   .\n"
+                 "    -           -            \n"
+                 ".   . | .   . | .   .   .   .\n"
+                 "                            -\n"
+                 ".   .   .   . | . | .   . | .\n"
+                 "    -               -        \n"
+                 ". | .   .   .   .   . | .   .\n"
+                 "                             \n"
+                 ".   .   .   .   . | .   .   .\n"
+                 "            -       -       -\n"
+                 ". | .   .   . | .   . | .   .\n")
+            board-str "0100000010000020000101001211000110000010010000101000000000010001101010001001000010000000000000100000101011001010"]
+        (ds/print-board {:board board-str :size 8}) => expected-board))
 
 ;
 ;(let [expected-board
