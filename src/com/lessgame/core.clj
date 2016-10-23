@@ -1,5 +1,8 @@
 (ns com.lessgame.core
-  (:require [com.lessgame.game-engine :as game]))
+  (:require [com.lessgame.game-engine :as game]
+            [com.lessgame.display.logger :as log]))
 
 (defn -main "Play LESS" [& args]
-  (-> game/init))
+  (log/debug "Please enter board string: ")
+  (let [board-str (read-line)]
+    (game/create-game board-str)))

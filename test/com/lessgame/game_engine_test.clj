@@ -2,6 +2,15 @@
   (:require [com.lessgame.game-engine :as engine]
             [midje.sweet :refer :all]))
 
+(let [board-str "0100000010000020000101001211000110000010010000101000000000010001101010001001000010000000000000100000101011001010"]
+  (fact "create game given a string that describes the board"
+        (engine/create-game board-str) => {:board board-str
+                                           :size  8
+                                           :black [0 1 8 9]
+                                           :red   [6 7 14 15]
+                                           :white [54 55 62 63]
+                                           :yellow [48 49 56 57]}))
+
 (let [top-left        2r0001
       top-right       2r0010
       bottom-left     2r0100
@@ -31,9 +40,9 @@
            two-at-bottom      move-up     one-up-one-down)))
 
 (fact "create 2x2 game for yellow player"
-      (engine/create-game "0000" "Yellow") => {:board "0000"
-                                               :player :yellow})
-;
+      (engine/create-game-old "0000" "Yellow") => {:board "0000"
+                                                   :player :yellow})
+
 ; TODO need pieces info in test data!
 ;(facts "the starting order is based on the colour"
 ;       (let [board "0000"

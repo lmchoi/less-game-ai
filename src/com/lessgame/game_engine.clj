@@ -2,7 +2,9 @@
   (:require [com.lessgame.reader.board-reader :as br]
             [com.lessgame.reader.player-reader :as pr]
             [com.lessgame.reader.move-reader :as mr]
-            [com.lessgame.ai.thinker :as player]))
+            [com.lessgame.display.display-state :as d]
+            [com.lessgame.ai.thinker :as player]
+            [com.lessgame.display.logger :as log]))
 
 (def ORDER_OF_PLAY [:yellow :black :white :red])
 
@@ -18,6 +20,7 @@
   (= player current-turn))
 
 (defn- read-instruction []
+  (log/debug "Waiting for instructions...")
   (let [instruction (read-line)]
     (when-not (= "Quit" instruction)
       instruction)))
@@ -49,14 +52,18 @@
       (when instruction
         (recur (update-state state instruction) (rest turns))))))
 
-(defn create-game [board-str player-str]
-  {:board  (br/parse-board board-str)
-   :player (pr/parse-player player-str)})
+(defn create-game-old [board-str player-str]
+  {:board   (br/parse-board board-str)
+   :player  (pr/parse-player player-str)})
 
 ; --- Pubic methods below ---
 
-(defn init []
-  (let [board-str (read-line)
-        player-str (read-line)
-        state (create-game board-str player-str)]
-    (start-playing state)))
+(defn create-game [board-str]
+  (let [state {:board  (br/parse-board board-str)
+               :size   8
+               :yellow [48 49 56 57]
+               :black  [0 1 8 9]
+               :red    [6 7 14 15]
+               :white  [54 55 62 63]}]
+    (d/print-board state)
+    state))
