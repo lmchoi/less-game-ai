@@ -4,8 +4,9 @@
             [com.lessgame.reader.move-reader :as mr]
             [com.lessgame.ai.thinker :as player]))
 
-(def BOARD_WIDTH 2)
 (def ORDER_OF_PLAY [:yellow :black :white :red])
+
+(def BOARD_WIDTH 2)
 (def ACTION_FOR_MOVE {:left   #(bit-shift-right % 1)
                       :right  #(bit-shift-left % 1)
                       :up     #(bit-shift-right % BOARD_WIDTH)
@@ -21,14 +22,14 @@
       instruction)))
 
 (defn- write-instruction [move]
-  (let [instruction (mr/translate move)]
+  (let [instruction (mr/translate-instruction move)]
     (println instruction)
     instruction))
 
 (defn- process-turn [state player]
   (if (play-turn? state player)
     (write-instruction (player/play-turn))
-    (read-instruction)))
+    (mr/parse-instructions (read-instruction))))
 
 ; --- Public for testing only... yiks... ---
 

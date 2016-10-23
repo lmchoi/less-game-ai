@@ -1,9 +1,6 @@
 (ns com.lessgame.reader.move-reader)
 
-; for debugging
-(defn- doNothing [_]
-  _)
-
+(def BOARD_WIDTH 2)
 (def ASCII_a 97)
 (def ASCII_1 49)
 
@@ -16,17 +13,34 @@
 (defn- to-ascii [value]
   (int (char value)))
 
-(defn to-coordintes [[start-y start-x
-                      end-y end-x]]
-  [(parse-x start-x) (parse-y start-y)
-   (parse-x end-x) (parse-y end-y)])
+(defn- calculate-pos [x y]
+  (+ x (* y BOARD_WIDTH)))
+
+(defn- calculate-direction [x-dir y-dir]
+  (cond
+    (pos? x-dir) :right
+    (neg? x-dir) :left
+    (pos? y-dir) :down
+    (neg? y-dir) :up))
+
+(defn- create-move [sx sy ex ey]
+  (let [x-dir (- ex sx)
+        y-dir (- ey sy)
+        dir (calculate-direction x-dir y-dir)
+        pos (calculate-pos sx sy)]
+    {:move dir
+     :pos  pos}))
 
 (defn- parse-move [move]
-  (to-coordintes (map to-ascii move)))
+  (let [[start-y start-x end-y end-x] (map to-ascii move)
+        sx (parse-x start-x)
+        sy (parse-y start-y)
+        ex (parse-x end-x)
+        ey (parse-y end-y)]
+    (create-move sx sy ex ey)))
 
 (defn parse-instructions [instruction]
   (map parse-move (re-seq #"\D\d\D\d" instruction)))
 
-(defn translate [move]
-  "b1b2"
-  )
+(defn translate-instruction [move]
+  "b1b2")
