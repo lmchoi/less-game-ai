@@ -42,5 +42,19 @@
 (defn parse-instructions [instruction]
   (map parse-move (re-seq #"\D\d\D\d" instruction)))
 
-(defn translate-instruction [move]
-  "b1b2")
+(defn translate-instruction [{:keys [pos move]}]
+  (let [x (mod pos BOARD_WIDTH)
+        y (quot pos BOARD_WIDTH)
+        start-x (+ x 1)
+        start-y (+ y ASCII_a)
+        end-x start-x
+        end-y start-y]
+    (cond
+      (= move :right) (str (char start-y)     start-x
+                           (char end-y)       (+ start-x 1))
+      (= move :left)  (str (char start-y)     start-x
+                           (char end-y)       (- start-x 1))
+      (= move :up)    (str (char start-y)     start-x
+                           (char (- end-y 1)) end-x)
+      (= move :down)  (str (char start-y)     start-x
+                           (char (+ end-y 1)) end-x))))

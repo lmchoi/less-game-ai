@@ -1,9 +1,8 @@
 (ns com.lessgame.ai.thinker)
 
 (defn play-turn []
-  [[0 1 1 1]
-   [0 0 1 0]
-   [1 0 1 1]])
+  {:pos 2
+   :move :right})
 
 (defn process-turn [input]
   input)

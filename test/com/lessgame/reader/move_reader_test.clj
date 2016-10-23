@@ -25,3 +25,19 @@
                                                     :move :right}
                                                    {:pos  1
                                                     :move :down}])
+
+(fact "translate move right to instruction"
+      (mr/translate-instruction {:pos 2
+                                 :move :right}) => "b1b2")
+
+(fact "translate move left to instruction"
+      (mr/translate-instruction {:pos 3
+                                 :move :left}) => "b2b1")
+
+(fact "translate move up to instruction"
+      (mr/translate-instruction {:pos 2
+                                 :move :up}) => "b1a1")
+
+(fact "translate move down to instruction"
+      (mr/translate-instruction {:pos 0
+                                 :move :down}) => "a1b1")
