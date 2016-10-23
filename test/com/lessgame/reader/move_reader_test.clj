@@ -5,7 +5,7 @@
 ;TODO-MC tidy tests in move reader
 ;TODO-MC jump support?
 (fact "parse one instruction to move to the right for 2x2 board"
-      (mr/parse-instructions "b1b2") => [{:pos  2
+      (mr/parse-instructions "b1b2") => [{:pos  8
                                           :move :right}])
 
 (fact "parse one instruction to move to the left for 2x2 board"
@@ -13,7 +13,7 @@
                                           :move :left}])
 
 (fact "parse one instruction to move up for 2x2 board"
-      (mr/parse-instructions "b1a1") => [{:pos  2
+      (mr/parse-instructions "b1a1") => [{:pos  8
                                           :move :up}])
 
 (fact "parse one instruction to move down for 2x2 board"
@@ -21,7 +21,7 @@
                                           :move :down}])
 
 (fact "parse one instruction with 3 moves for 2x2 board"
-      (mr/parse-instructions "b1b2:a1a2:a2b2") => [{:pos  2
+      (mr/parse-instructions "b1b2:a1a2:a2b2") => [{:pos  8
                                                     :move :right}
                                                    {:pos  0
                                                     :move :right}
@@ -29,15 +29,15 @@
                                                     :move :down}])
 
 (fact "translate move right to instruction"
-      (mr/translate-instruction {:pos 2
+      (mr/translate-instruction {:pos 8
                                  :move :right}) => "b1b2")
 
 (fact "translate move left to instruction"
-      (mr/translate-instruction {:pos 3
+      (mr/translate-instruction {:pos 9
                                  :move :left}) => "b2b1")
 
 (fact "translate move up to instruction"
-      (mr/translate-instruction {:pos 2
+      (mr/translate-instruction {:pos 8
                                  :move :up}) => "b1a1")
 
 (fact "translate move down to instruction"

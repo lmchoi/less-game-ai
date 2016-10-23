@@ -1,6 +1,6 @@
 (ns com.lessgame.reader.move-reader)
 
-(def BOARD_WIDTH 2)
+(def BOARD_WIDTH 8)
 (def ASCII_a 97)
 (def ASCII_1 49)
 

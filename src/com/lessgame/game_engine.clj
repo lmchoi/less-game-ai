@@ -8,8 +8,7 @@
 
 (def ORDER_OF_PLAY [:yellow :black :white :red])
 
-; TODO-MC need to support 8 soon!
-(def BOARD_WIDTH 2)
+(def BOARD_WIDTH 8)
 (def ACTION_FOR_MOVE {:left   #(bit-shift-right % 1)
                       :right  #(bit-shift-left % 1)
                       :up     #(bit-shift-right % BOARD_WIDTH)
@@ -35,6 +34,24 @@
     (write-instruction (player/play-turn))
     (mr/parse-instructions (read-instruction))))
 
+(defn- find-piece [pieces-for-player pos]
+  (.indexOf pieces-for-player pos))
+
+(defn- calculation-destination-pos [{:keys [move pos]}]
+  (cond
+    (= move :up) (- pos BOARD_WIDTH)
+    (= move :down) (+ pos BOARD_WIDTH)
+    (= move :left) (- pos 1)
+    (= move :right) (+ pos 1)))
+
+; TODO support instruction from other colours (beside yellow)
+(defn- apply-instruction [state instruction player]
+  (let [pos (:pos instruction)
+        updated-state (assoc-in state
+                        [player (find-piece (player state) pos)]
+                        (calculation-destination-pos instruction))]
+    updated-state))
+
 ; --- Public for testing only... yiks... ---
 
 (defn update-state [{:keys [yellow] :as state}
@@ -52,10 +69,6 @@
       (when instruction
         (recur (update-state state instruction) (rest turns))))))
 
-(defn create-game-old [board-str player-str]
-  {:board   (br/parse-board board-str)
-   :player  (pr/parse-player player-str)})
-
 ; --- Pubic methods below ---
 
 (defn create-game [board-str]
@@ -67,3 +80,8 @@
                :white  [54 55 62 63]}]
     (d/print-board state)
     state))
+
+(defn take-turn
+  ([state instructions] (take-turn state instructions :yellow))
+  ([state instructions player]
+   (reduce #(apply-instruction %1 %2 player) state (mr/parse-instructions instructions))))
