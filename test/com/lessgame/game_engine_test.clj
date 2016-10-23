@@ -26,9 +26,12 @@
   (fact "take turn to move yellow pieces"
         (engine/take-turn (engine/create-game board-str) "h2h3:g1f1" :yellow) => (contains {:yellow [40 49 56 58]}))
 
-  ; TODO note the ordering in the vector...
+  ; Note the ordering in the vector...
   (fact "take turn to move yellow pieces"
         (engine/take-turn (engine/create-game board-str) "h2h3:g1f1:h1g1" :yellow) => (contains {:yellow [40 49 48 58]}))
+
+  (fact "take turn to jump over another piece"
+        (engine/take-turn (engine/create-game board-str) "h1f1" :yellow) => (contains {:yellow [48 49 40 57]}))
   )
 
 ; TODO test for 8x8

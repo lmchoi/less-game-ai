@@ -29,7 +29,8 @@
         dir (calculate-direction x-dir y-dir)
         pos (calculate-pos sx sy)]
     {:move dir
-     :pos  pos}))
+     :pos  pos
+     :value (if (zero? x-dir) y-dir x-dir)}))
 
 (defn- parse-move [move]
   (let [[start-y start-x end-y end-x] (map to-ascii move)

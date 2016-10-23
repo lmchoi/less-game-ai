@@ -37,14 +37,11 @@
 (defn- find-piece [pieces-for-player pos]
   (.indexOf pieces-for-player pos))
 
-(defn- calculation-destination-pos [{:keys [move pos]}]
+(defn- calculation-destination-pos [{:keys [move pos value]}]
   (cond
-    (= move :up) (- pos BOARD_WIDTH)
-    (= move :down) (+ pos BOARD_WIDTH)
-    (= move :left) (- pos 1)
-    (= move :right) (+ pos 1)))
+    (or (= move :up) (= move :down))    (+ pos (* value BOARD_WIDTH))
+    (or (= move :left) (= move :right)) (+ pos value)))
 
-; TODO support instruction from other colours (beside yellow)
 (defn- apply-instruction [state instruction player]
   (let [pos (:pos instruction)
         updated-state (assoc-in state

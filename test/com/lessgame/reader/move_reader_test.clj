@@ -3,43 +3,75 @@
             [midje.sweet :refer :all]))
 
 ;TODO-MC tidy tests in move reader
-;TODO-MC jump support?
-(fact "parse one instruction to move to the right for 2x2 board"
+(fact "parse one instruction to move to the right"
       (mr/parse-instructions "b1b2") => [{:pos  8
-                                          :move :right}])
+                                          :move :right
+                                          :value 1}])
 
-(fact "parse one instruction to move to the left for 2x2 board"
+(fact "parse one instruction to move to the left"
       (mr/parse-instructions "a2a1") => [{:pos  1
-                                          :move :left}])
+                                          :move :left
+                                          :value -1}])
 
-(fact "parse one instruction to move up for 2x2 board"
+(fact "parse one instruction to move up"
       (mr/parse-instructions "b1a1") => [{:pos  8
-                                          :move :up}])
+                                          :move :up
+                                          :value -1}])
 
-(fact "parse one instruction to move down for 2x2 board"
+(fact "parse one instruction to move down"
       (mr/parse-instructions "a1b1") => [{:pos  0
-                                          :move :down}])
+                                          :move :down
+                                          :value 1}])
 
-(fact "parse one instruction with 3 moves for 2x2 board"
+(fact "parse one instruction to jump down"
+      (mr/parse-instructions "a1c1") => [{:pos  0
+                                          :move :down
+                                          :value 2}])
+
+(fact "parse one instruction to jump to the right"
+      (mr/parse-instructions "a1a3") => [{:pos  0
+                                          :move :right
+                                          :value 2}])
+
+(fact "parse one instruction to jump to the left"
+      (mr/parse-instructions "a3a1") => [{:pos  2
+                                          :move :left
+                                          :value -2}])
+
+(fact "parse one instruction to jump up"
+      (mr/parse-instructions "c2a2") => [{:pos  17
+                                          :move :up
+                                          :value -2}])
+
+
+
+(fact "parse one instruction with 3 moves"
       (mr/parse-instructions "b1b2:a1a2:a2b2") => [{:pos  8
-                                                    :move :right}
+                                                    :move :right
+                                                    :value 1}
                                                    {:pos  0
-                                                    :move :right}
+                                                    :move :right
+                                                    :value 1}
                                                    {:pos  1
-                                                    :move :down}])
+                                                    :move :down
+                                                    :value 1}])
 
 (fact "translate move right to instruction"
       (mr/translate-instruction {:pos 8
-                                 :move :right}) => "b1b2")
+                                 :move :right
+                                 :value 1}) => "b1b2")
 
 (fact "translate move left to instruction"
       (mr/translate-instruction {:pos 9
-                                 :move :left}) => "b2b1")
+                                 :move :left
+                                 :value -1}) => "b2b1")
 
 (fact "translate move up to instruction"
       (mr/translate-instruction {:pos 8
-                                 :move :up}) => "b1a1")
+                                 :move :up
+                                 :value -1}) => "b1a1")
 
 (fact "translate move down to instruction"
       (mr/translate-instruction {:pos 0
-                                 :move :down}) => "a1b1")
+                                 :move :down
+                                 :value 1}) => "a1b1")
