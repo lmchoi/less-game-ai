@@ -43,8 +43,6 @@
                                           :move :up
                                           :value -2}])
 
-
-
 (fact "parse one instruction with 3 moves"
       (mr/parse-instructions "b1b2:a1a2:a2b2") => [{:pos  8
                                                     :move :right

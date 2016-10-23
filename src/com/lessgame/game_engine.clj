@@ -74,11 +74,14 @@
                :yellow [48 49 56 57]
                :black  [0 1 8 9]
                :red    [6 7 14 15]
-               :white  [54 55 62 63]}]
+               :white  [54 55 62 63]
+               :turn   0}]
     (d/print-board state)
     state))
 
 (defn take-turn
-  ([state instructions] (take-turn state instructions :yellow))
+  ([state instructions] (take-turn state instructions (nth ORDER_OF_PLAY (mod (:turn state) 4))))
   ([state instructions player]
-   (reduce #(apply-instruction %1 %2 player) state (mr/parse-instructions instructions))))
+   (update
+     (reduce #(apply-instruction %1 %2 player) state (mr/parse-instructions instructions))
+     :turn inc)))
