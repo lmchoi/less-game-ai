@@ -4,9 +4,15 @@
             [com.lessgame.reader.move-reader :as mr]
             [com.lessgame.ai.thinker :as player]))
 
+(def BOARD_WIDTH 2)
 (def ORDER_OF_PLAY [:yellow :black :white :red])
+(def ACTION_FOR_MOVE {:left   #(bit-shift-right % 1)
+                      :right  #(bit-shift-left % 1)
+                      :up     #(bit-shift-right % BOARD_WIDTH)
+                      :down   #(bit-shift-left % BOARD_WIDTH)
+                      :get    #(bit-shift-left 1 %)})
 
-(defn play-turn? [{:keys [player]} current-turn]
+(defn- play-turn? [{:keys [player]} current-turn]
   (= player current-turn))
 
 (defn- read-instruction []
@@ -24,19 +30,28 @@
     (write-instruction (player/play-turn))
     (read-instruction)))
 
-(defn- update-state [state instruction]
-  state)
+; --- Public for testing only... yiks... ---
 
-(defn start-playing [state]
-  (loop [s      state
-         turns  (cycle ORDER_OF_PLAY)]
-    (let [instruction (process-turn s (first turns))]
+(defn update-state [{:keys [y-pieces] :as state}
+                    {:keys [pos move]}]
+  (let [action    (ACTION_FOR_MOVE move)
+        start-pos ((ACTION_FOR_MOVE :get) pos)
+        end-pos   (action start-pos)]
+    (assoc state
+      :y-pieces (bit-or (bit-xor y-pieces start-pos) end-pos))))
+
+(defn start-playing [s]
+  (loop [state s
+         turns (cycle ORDER_OF_PLAY)]
+    (let [instruction (process-turn state (first turns))]
       (when instruction
-        (recur (update-state s instruction) (rest turns))))))
+        (recur (update-state state instruction) (rest turns))))))
 
 (defn create-game [board-str player-str]
   {:board  (br/parse-board board-str)
    :player (pr/parse-player player-str)})
+
+; --- Pubic methods below ---
 
 (defn init []
   (let [board-str (read-line)
