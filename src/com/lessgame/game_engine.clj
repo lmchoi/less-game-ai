@@ -6,6 +6,16 @@
 
 (def BOARD_WIDTH 8)
 
+(def TL_CORNER [0 1 8 9])
+(def TR_CORNER [6 7 14 15])
+(def BL_CORNER [48 49 56 57])
+(def BR_CORNER [54 55 62 63])
+
+(def END_GAME {:yellow  TR_CORNER
+               :black   BR_CORNER
+               :red     BL_CORNER
+               :white   TL_CORNER})
+
 (defn- find-piece [pieces-for-player pos]
   (.indexOf pieces-for-player pos))
 
@@ -23,12 +33,13 @@
 (defn create-game [board-str]
   (let [state {:board  board-str
                :size   8
-               :yellow [48 49 56 57]
-               :black  [0 1 8 9]
-               :red    [6 7 14 15]
-               :white  [54 55 62 63]
+               :yellow BL_CORNER
+               :black  TL_CORNER
+               :red    TR_CORNER
+               :white  BR_CORNER
                :turn   0
-               :current-turn :yellow}]
+               :current-turn :yellow
+               :end-game  END_GAME}]
     (d/print-board state)
     state))
 
