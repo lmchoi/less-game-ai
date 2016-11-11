@@ -6,21 +6,25 @@
             [com.lessgame.display.logger :as log]
             [com.lessgame.reader.player-reader :as pr]))
 
-(defn- get-next-move [state ai-colour]
+(defn- get-next-move [state {:keys [ai-colour] :as ai-state}]
+  (in/prompt-move)
   (if (= (:current-turn state) ai-colour)
-    (ai/play-move state)
-    (in/prompt-move)))
+    (ai/play-move ai-state)
+    (in/prompt-move))
+  )
 
 (defn start []
   (let [board-str "0100000010000020000101001211000110000010010000101000000000010001101010001001000010000000000000100000101011001010"
-        ai-colour (pr/parse-player (in/prompt-ai))
         state     (game/create-game board-str)
-        command   (get-next-move state ai-colour)]
+        ai-colour (pr/parse-player (in/prompt-ai))
+        ai        (ai/create-thinker ai-colour state)
+        command   (get-next-move state ai)]
 
     (loop [updated-state  state
            move           command]
       (if-not (nil? move)
-        (let [new-state (game/take-turn updated-state move)]
+        (let [new-state     (game/take-turn updated-state move)
+              new-ai-state  (ai/update ai-colour new-state)]
           (d/print-board new-state)
-          (recur new-state (get-next-move new-state ai-colour)))))))
+          (recur new-state (get-next-move new-state new-ai-state)))))))
 
