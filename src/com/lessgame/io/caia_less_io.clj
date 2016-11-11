@@ -8,7 +8,6 @@
             [com.lessgame.reader.move-reader :as mr]))
 
 (defn- get-next-move [state {:keys [ai-colour] :as ai-state}]
-  (in/prompt-move)
   (if (= (:current-turn state) ai-colour)
     (mr/translate-instruction (ai/play-turn ai-state))
     (in/prompt-move))
@@ -25,7 +24,7 @@
            move           command]
       (if-not (nil? move)
         (let [new-state     (game/take-turn updated-state move)
-              new-ai-state  (ai/think ai-colour new-state)]
+              new-ai-state  (ai/think ai new-state)]
           (d/print-board new-state)
           (recur new-state (get-next-move new-state new-ai-state)))))))
 

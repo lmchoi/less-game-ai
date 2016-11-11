@@ -25,7 +25,7 @@
   (let [x-distance (x-distance-between pos end-game-0 board-size)
         y-distance (y-distance-between pos end-game-0 board-size)]
 
-    (log/debug (str "distance from end-game " x-distance y-distance))
+    ;(log/debug (str "distance from end-game " x-distance " " y-distance))
 
     (cond
       (= end-game-0 pos) nil
@@ -41,11 +41,11 @@
     (= move :down) (+ pos board-size))
   )
 
-(defn- consider-piece [current-pos end-game board-size]
+(defn- consider-piece [piece-position end-game board-size]
   (let [end-game-0 (end-game 0)]
 
     (loop [moves-remaining  3
-           pos              (current-pos 0)
+           pos              piece-position
            instructions     []]
 
       (if (or (= moves-remaining 0)
@@ -58,25 +58,32 @@
                    (conj instructions next-move))))))
     ))
 
+(defn pick-furthest-piece [current-pos end-game board-size]
+  (current-pos 0))
+
+(defn- update-pieces [board-size position destination]
+  (let [x-distance (x-distance-between position destination board-size)
+        y-distance (y-distance-between position destination board-size)]
+    {:pos position :distance (+ x-distance y-distance)}))
+
+(defn create-thinker [ai-colour state]
+  (let [current-turn (:current-turn state)
+        current-pos (current-turn state)
+        end-game (current-turn (:end-game state))]
+    (assoc {:ai-colour ai-colour :ai-state  state} :pieces (map (partial update-pieces (:size state)) current-pos end-game))))
+
+(defn think [ai new-state]
+  (let [current-turn (:current-turn new-state)
+        current-pos (current-turn new-state)
+        end-game (current-turn (:end-game new-state))]
+    (assoc (assoc ai :pieces (map (partial update-pieces (:size new-state)) current-pos end-game)) :ai-state new-state)))
 
 (defn play-turn [{:keys [ai-state]}]
   (let [current-turn (:current-turn ai-state)
         current-pos (current-turn ai-state)
         end-game (current-turn (:end-game ai-state))]
 
-    (log/debug "AI is thinking...")
-
-    (consider-piece current-pos end-game (:size ai-state))))
-
-(defn create-thinker [ai-colour state]
-  {:ai-colour ai-colour
-   :ai-state state}
-  )
-
-(defn think [ai-colour new-state]
-  {:ai-colour ai-colour
-   :ai-state new-state})
-
+    (consider-piece (pick-furthest-piece current-pos end-game (:size ai-state)) end-game (:size ai-state))))
 
 ;-----
 ;"h1h3:g1g3:h2f2"

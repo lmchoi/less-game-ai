@@ -8,9 +8,9 @@
 (def BOARD_WIDTH 8)
 
 (def TL_CORNER [0 1 8 9])
-(def TR_CORNER [6 7 14 15])
-(def BL_CORNER [48 49 56 57])
-(def BR_CORNER [54 55 62 63])
+(def TR_CORNER [7 6 15 14])
+(def BL_CORNER [56 57 49 48])
+(def BR_CORNER [63 62 55 54])
 
 (def END_GAME {:yellow  TR_CORNER
                :black   BR_CORNER
