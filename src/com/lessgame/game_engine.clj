@@ -22,8 +22,10 @@
 
 (defn- calculation-destination-pos [{:keys [move pos value]}]
   (cond
-    (or (= move :up) (= move :down))    (+ pos (* value BOARD_WIDTH))
-    (or (= move :left) (= move :right)) (+ pos value)))
+    (= move :down)  (+ pos (* value BOARD_WIDTH))
+    (= move :up)    (- pos (* value BOARD_WIDTH))
+    (= move :right) (+ pos value)
+    (= move :left)  (- pos value)))
 
 (defn- apply-instruction [state instruction player]
   (let [pos (:pos instruction)]

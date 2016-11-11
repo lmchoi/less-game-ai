@@ -28,9 +28,9 @@
         y-dir (- ey sy)
         dir (calculate-direction x-dir y-dir)
         pos (calculate-pos sx sy)]
-    {:move dir
-     :pos  pos
-     :value (if (zero? x-dir) y-dir x-dir)}))
+    {:move  dir
+     :pos   pos
+     :value (if (zero? x-dir) (Math/abs y-dir) (Math/abs x-dir))}))
 
 (defn- parse-move [move]
   (let [[start-y start-x end-y end-x] (map to-ascii move)
@@ -44,7 +44,7 @@
   (map parse-move (re-seq #"\D\d\D\d" instruction)))
 
 ;TODO-MC tidy translate instruction
-(defn translate-move [{:keys [pos move]}]
+(defn translate-move [{:keys [pos move value]}]
   (let [x (mod pos BOARD_WIDTH)
         y (quot pos BOARD_WIDTH)
         start-x (+ x 1)
@@ -53,13 +53,13 @@
         end-y start-y]
     (cond
       (= move :right) (str (char start-y)     start-x
-                           (char end-y)       (+ start-x 1))
+                           (char end-y)       (+ start-x value))
       (= move :left)  (str (char start-y)     start-x
-                           (char end-y)       (- start-x 1))
+                           (char end-y)       (- start-x value))
       (= move :up)    (str (char start-y)     start-x
-                           (char (- end-y 1)) end-x)
+                           (char (- end-y value)) end-x)
       (= move :down)  (str (char start-y)     start-x
-                           (char (+ end-y 1)) end-x))))
+                           (char (+ end-y value)) end-x))))
 
 (defn translate-instruction [moves]
   (reduce #(str

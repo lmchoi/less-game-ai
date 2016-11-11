@@ -19,19 +19,40 @@
    :value 1
    :cost  1})
 
+(defn- right-of
+  ([pos num]
+   (+ pos num))
+  ([pos]
+   (right-of pos 1)))
+
+(defn- bottom-of
+  ([pos board-size num]
+   (+ pos (* board-size num)))
+  ([pos board-size]
+   (bottom-of pos board-size 1)))
+
 (defn- jump-right [pos]
   (assoc (move-right pos) :value 2))
 
 (defn- jump-down [pos]
   (assoc (move-down pos) :value 2))
 
-(defn- jump-right? [pos all-piece]
-  (and (some #(= (inc pos) %) all-piece)
-       (not (some #(= (+ pos 2) %) all-piece))))
+(defn- occupied? [pos all-pieces]
+  (some #(= pos %) all-pieces))
+
+(defn- jump-right? [pos all-pieces]
+  (and (occupied? (right-of pos) all-pieces)
+       (not (occupied? (right-of pos 2) all-pieces))))
 
 (defn- jump-down? [pos all-piece board-size]
-  (and (some #(= (+ pos board-size) %) all-piece)
-       (not (some #(= (+ pos (* board-size 2)) %) all-piece))))
+  (and (occupied? (bottom-of pos board-size) all-piece)
+       (not (occupied? (bottom-of pos board-size 2) all-piece))))
+
+(defn move-right? [pos all-pieces]
+  (not (occupied? (right-of pos) all-pieces)))
+
+(defn move-down? [pos all-pieces board-size]
+  (not (occupied? (bottom-of pos board-size) all-pieces)))
 
 (defn- consider-piece [{:keys [pos]} ai-state]
   (let [current-turn (:current-turn ai-state)
@@ -39,7 +60,7 @@
         board-size (:size ai-state)
         x-distance (x-distance-between pos end-game-0 board-size)
         y-distance (y-distance-between pos end-game-0 board-size)
-        all-pieces (:yellow ai-state)                       ; TODO-MC all-pieces should contain all colours
+        all-pieces (concat (:yellow ai-state) (:black ai-state))
         ]
 
     (cond
@@ -52,10 +73,12 @@
         (jump-down pos)
 
       (and (> y-distance 0)
-           (> y-distance x-distance))
+           (> y-distance x-distance)
+           (move-down? pos all-pieces board-size))
         (move-down pos)
 
-      (> x-distance 0)
+      (and (> x-distance 0)
+           (move-right? pos all-pieces))
         (move-right pos)
 
       :default
@@ -116,6 +139,7 @@
         (let [piece-to-move (pick-furthest-piece ps)        ; FIXME-MC consider the value of the move before making the move
               next-move     (consider-piece piece-to-move
                                             ai-state)]
+          (prn next-move)
           (if (nil? next-move)
             instructions ; FIXME-MC consider other pieces before returning???
             (recur (dec moves-remaining)

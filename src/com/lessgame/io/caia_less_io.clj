@@ -9,7 +9,11 @@
 
 (defn- get-next-move [state {:keys [ai-colour] :as ai-state}]
   (if (= (:current-turn state) ai-colour)
-    (mr/translate-instruction (ai/play-turn ai-state))
+    (let [ai-turn (ai/play-turn ai-state)
+          instruction (mr/translate-instruction ai-turn)]
+      (prn ai-turn)
+      (prn instruction)
+      instruction)
     (in/prompt-move))
   )
 
