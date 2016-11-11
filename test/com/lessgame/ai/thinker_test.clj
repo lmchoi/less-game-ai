@@ -17,7 +17,7 @@
                                          :end-game     {:yellow [0]}
                                          :current-turn :yellow}
                              :ai-colour :yellow}]
-               (ai/play-turn ai-state)) => nil))
+               (ai/play-turn ai-state)) => []))
 
 (facts "make one move to end the game"
        (fact "move right to end the game"
@@ -27,7 +27,7 @@
                                          :end-game     {:yellow [1]}
                                          :current-turn :yellow}
                              :ai-colour :yellow}]
-               (ai/play-turn ai-state)) => "a1a2")
+               (ai/play-turn ai-state)) => [{:cost 1 :move :right :pos 0 :value 1}])
 
        (fact "move down to end the game"
              (let [ai-state {:ai-state  {:board        empty-board
@@ -36,9 +36,9 @@
                                          :end-game     {:yellow [2]}
                                          :current-turn :yellow}
                              :ai-colour :yellow}]
-               (ai/play-turn ai-state)) => "a1b1"))
+               (ai/play-turn ai-state)) => [{:cost 1 :move :down :pos 0 :value 1}]))
 
-#_(facts "make two moves to end the game"
+(facts "make two moves to end the game"
        (fact "move right then down"
              (let [ai-state {:ai-state  {:board        empty-board
                                          :size         2
@@ -46,4 +46,20 @@
                                          :end-game     {:yellow [3]}
                                          :current-turn :yellow}
                              :ai-colour :yellow}]
-               (ai/play-turn ai-state)) => "a1a2:a2b2"))
+               (ai/play-turn ai-state))
+             => [{:cost 1 :move :right :pos 0 :value 1}
+                 {:cost 1 :move :down :pos 1 :value 1}]))
+
+
+(facts "make three moves to end the game"
+       (fact "move down, right, down"
+             (let [ai-state {:ai-state  {:board        empty-board
+                                         :size         3
+                                         :yellow       [1]
+                                         :end-game     {:yellow [8]}
+                                         :current-turn :yellow}
+                             :ai-colour :yellow}]
+               (ai/play-turn ai-state))
+             => [{:cost 1 :move :down :pos 1 :value 1}
+                 {:cost 1 :move :right :pos 4 :value 1}
+                 {:cost 1 :move :down :pos 5 :value 1}]))

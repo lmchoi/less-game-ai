@@ -44,7 +44,7 @@
   (map parse-move (re-seq #"\D\d\D\d" instruction)))
 
 ;TODO-MC tidy translate instruction
-(defn translate-instruction [{:keys [pos move]}]
+(defn translate-move [{:keys [pos move]}]
   (let [x (mod pos BOARD_WIDTH)
         y (quot pos BOARD_WIDTH)
         start-x (+ x 1)
@@ -60,3 +60,11 @@
                            (char (- end-y 1)) end-x)
       (= move :down)  (str (char start-y)     start-x
                            (char (+ end-y 1)) end-x))))
+
+(defn translate-instruction [moves]
+  (reduce #(str
+            (when-not (nil? %)
+              (str % ":"))
+            (translate-move %2))
+          nil
+          moves))

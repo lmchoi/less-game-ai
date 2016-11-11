@@ -4,12 +4,13 @@
             [com.lessgame.display.display-state :as d]
             [com.lessgame.ai.thinker :as ai]
             [com.lessgame.display.logger :as log]
-            [com.lessgame.reader.player-reader :as pr]))
+            [com.lessgame.reader.player-reader :as pr]
+            [com.lessgame.reader.move-reader :as mr]))
 
 (defn- get-next-move [state {:keys [ai-colour] :as ai-state}]
   (in/prompt-move)
   (if (= (:current-turn state) ai-colour)
-    (ai/play-turn ai-state)
+    (mr/translate-instruction (ai/play-turn ai-state))
     (in/prompt-move))
   )
 

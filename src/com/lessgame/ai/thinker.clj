@@ -21,20 +21,41 @@
    :value 1
    :cost  1})
 
-(defn- consider-piece [pos end-game board-size]
-  (let [end-game-0 (end-game 0)
-        x-distance (x-distance-between pos end-game-0 board-size)
+(defn- find-next-move [pos end-game-0 board-size]
+  (let [x-distance (x-distance-between pos end-game-0 board-size)
         y-distance (y-distance-between pos end-game-0 board-size)]
 
     (log/debug (str "distance from end-game " x-distance y-distance))
 
     (cond
-      (= end-game-0 pos)        nil
+      (= end-game-0 pos) nil
       (> y-distance x-distance) (move-down pos)
-      :default                  (move-right pos))))
+      :default (move-right pos))))
 
 (defn- game-ended? [pos end-game]
-  (= (pos 0) (end-game 0)))
+  (= pos end-game))
+
+(defn- update-position [pos {:keys [move value]} board-size]
+  (cond
+    (= move :right) (inc pos)
+    (= move :down) (+ pos board-size))
+  )
+
+(defn- consider-piece [current-pos end-game board-size]
+  (let [end-game-0 (end-game 0)]
+
+    (loop [moves-remaining  3
+           pos              (current-pos 0)
+           instructions     []]
+
+      (if (or (= moves-remaining 0)
+              (game-ended? pos end-game-0))
+        instructions
+        (let [next-move (find-next-move pos end-game-0 board-size)]
+          (when-not (nil? next-move)
+            (recur (dec moves-remaining) (update-position pos next-move board-size) (conj instructions next-move))))))
+    ))
+
 
 (defn play-turn [{:keys [ai-state]}]
   (let [current-turn (:current-turn ai-state)
@@ -43,14 +64,7 @@
 
     (log/debug "AI is thinking...")
 
-    (let [instruction []]
-      (when-not (game-ended? current-pos end-game)
-        (some->> (consider-piece (current-pos 0) end-game (:size ai-state))
-                (conj instruction)
-                (first)
-                (mr/translate-instruction))))
-    ))
-
+    (consider-piece current-pos end-game (:size ai-state))))
 
 (defn create-thinker [ai-colour state]
   {:ai-colour ai-colour
