@@ -11,7 +11,8 @@
                                            :white  [54 55 62 63]
                                            :yellow [48 49 56 57]
                                            :turn   0
-                                           :current-turn :yellow})
+                                           :current-turn :yellow
+                                           :end-game engine/END_GAME})
 
   (fact "take turn to move yellow up one space"
         (engine/take-turn (engine/create-game board-str) "g1f1") => (contains {:yellow [40 49 56 57]}))

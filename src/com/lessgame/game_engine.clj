@@ -3,6 +3,7 @@
             [com.lessgame.display.display-state :as d]))
 
 (def ORDER_OF_PLAY [:yellow :black :white :red])
+(def NUMBER_OF_PLAYERS (count ORDER_OF_PLAY))
 
 (def BOARD_WIDTH 8)
 
@@ -44,10 +45,10 @@
     state))
 
 (defn take-turn
-  ([state instructions] (take-turn state instructions (nth ORDER_OF_PLAY (mod (:turn state) 4))))
+  ([state instructions] (take-turn state instructions (nth ORDER_OF_PLAY (mod (:turn state) NUMBER_OF_PLAYERS))))
   ([state instructions player]
    (let [turn-number (inc (:turn state))]
      (assoc
        (reduce #(apply-instruction %1 %2 player) state (mr/parse-instructions instructions))
        :turn         turn-number
-       :current-turn (nth ORDER_OF_PLAY (mod turn-number 4))))))
+       :current-turn (nth ORDER_OF_PLAY (mod turn-number NUMBER_OF_PLAYERS))))))
