@@ -53,7 +53,9 @@
         instructions
         (let [next-move (find-next-move pos end-game-0 board-size)]
           (when-not (nil? next-move)
-            (recur (dec moves-remaining) (update-position pos next-move board-size) (conj instructions next-move))))))
+            (recur (dec moves-remaining)
+                   (update-position pos next-move board-size)
+                   (conj instructions next-move))))))
     ))
 
 
