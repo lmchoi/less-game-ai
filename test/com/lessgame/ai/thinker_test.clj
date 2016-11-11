@@ -92,13 +92,13 @@
          (fact "move the piece furthest away first"
                (ai/play-turn (ai/create-thinker :yellow state)) => [{:cost 1 :move :right :pos 0 :value 1}
                                                                     {:cost 1 :move :down  :pos 1 :value 1}
-                                                                    {:cost 1 :move :right  :pos 4 :value 1}])
+                                                                    {:cost 1 :move :down  :pos 2 :value 1}])
 
          (fact "jump to the right"
                (ai/play-turn (ai/create-thinker :yellow (assoc state :yellow [0 1])))
                => [{:cost 1 :move :right :pos 0 :value 2}
-                   {:cost 1 :move :down  :pos 1 :value 1}
-                   {:cost 1 :move :down  :pos 2 :value 1}])
+                   {:cost 1 :move :down  :pos 2 :value 1}
+                   {:cost 1 :move :down  :pos 1 :value 1}])
        ))
 
 

@@ -1,7 +1,5 @@
 (ns com.lessgame.ai.thinker
-  (:require [com.lessgame.display.logger :as log]
-            [com.lessgame.display.display-state :as p]
-            [com.lessgame.reader.move-reader :as mr]))
+  (:require [com.lessgame.display.logger :as log]))
 
 (defn- x-distance-between [start-x end-x board-size]
   (mod (- end-x start-x) board-size))
@@ -21,32 +19,54 @@
    :value 1
    :cost  1})
 
-(defn- find-next-move [{:keys [pos]} end-game-0 board-size]
-  (let [x-distance (x-distance-between pos end-game-0 board-size)
-        y-distance (y-distance-between pos end-game-0 board-size)]
+(defn- jump-right [pos]
+  (assoc (move-right pos) :value 2))
+
+(defn- jump-down [pos]
+  (assoc (move-down pos) :value 2))
+
+(defn- jump-right? [pos all-piece]
+  (some #(= (inc pos) %) all-piece))
+
+(defn- jump-down? [pos all-piece board-size]
+  (some #(= (+ pos board-size) %) all-piece))
+
+(defn- consider-piece [{:keys [pos]} ai-state]
+  (let [current-turn (:current-turn ai-state)
+        end-game-0 ((current-turn (:end-game ai-state)) 0)
+        board-size (:size ai-state)
+        x-distance (x-distance-between pos end-game-0 board-size)
+        y-distance (y-distance-between pos end-game-0 board-size)
+        all-pieces (:yellow ai-state)                       ; TODO-MC all-pieces should contain all colours
+        ]
 
     (cond
-      (= end-game-0 pos) nil
-      (> y-distance x-distance) (move-down pos)
-      :default (move-right pos))))
+      (and (> x-distance 1)
+           (jump-right? pos all-pieces))
+        (jump-right pos)
 
+      (and (> y-distance 1)
+           (jump-down? pos all-pieces board-size))
+        (jump-down pos)
 
-(defn- consider-piece [piece end-game board-size]
-  (let [end-game-0 (end-game 0)]
+      (= end-game-0 pos)
+        nil
 
-    (find-next-move piece end-game-0 board-size)
-    ))
+      (> y-distance x-distance)
+        (move-down pos)
+
+      :default
+        (move-right pos)
+      )))
 
 (defn- pick-furthest-piece [pieces]
   (nth (sort-by :distance > pieces) 0))
 
 (defn- at-destination? [piece]
-  (nil? (:distance piece))
-  )
+  (nil? (:distance piece)))
 
 (defn- game-ended? [{:keys [pieces]}]
-  (every? at-destination? pieces)
-  )
+  (every? at-destination? pieces))
 
 (defn- update-pieces [board-size position destination]
   (let [x-distance (x-distance-between position destination board-size)
@@ -64,25 +84,24 @@
 (defn create-thinker [ai-colour state]
   (think {:ai-colour ai-colour} state))
 
-(defn- update-pos [pos move board-size]
-  (cond
-    (= move :right) (inc pos)
-    (= move :down) (+ pos board-size))
-  )
-
-(defn- update-position [{:keys [pos move]} board-size piece]
+(defn- update-position [{:keys [move pos value]}
+                        board-size
+                        {:keys [distance] :as piece}]
   (if (= pos (:pos piece))
-    (update piece :pos update-pos move board-size)
+    (if (= move :down)
+      (assoc piece
+        :pos (+ pos (* value board-size))
+        :distance (- distance value))
+      (assoc piece
+        :pos (+ pos value)
+        :distance (- distance value)))
     piece))
 
 (defn- move-pieces [pieces next-move board-size]
-  (map (partial update-position next-move board-size) pieces)
-  )
+  (map (partial update-position next-move board-size) pieces))
 
 (defn play-turn [{:keys [ai-state pieces] :as ai}]
-  (let [current-turn (:current-turn ai-state)
-        end-game (current-turn (:end-game ai-state))
-        board-size (:size ai-state)]
+  (let [board-size (:size ai-state)]
 
     (loop [moves-remaining  3
            ps                pieces
@@ -93,8 +112,7 @@
         instructions
         (let [piece-to-move (pick-furthest-piece ps)
               next-move     (consider-piece piece-to-move
-                                            end-game
-                                            board-size)]
+                                            ai-state)]
           (if (nil? next-move)
             instructions
             (recur (dec moves-remaining)
