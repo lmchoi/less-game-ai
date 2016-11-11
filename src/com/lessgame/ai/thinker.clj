@@ -21,45 +21,32 @@
    :value 1
    :cost  1})
 
-(defn- find-next-move [pos end-game-0 board-size]
+(defn- find-next-move [{:keys [pos]} end-game-0 board-size]
   (let [x-distance (x-distance-between pos end-game-0 board-size)
         y-distance (y-distance-between pos end-game-0 board-size)]
-
-    ;(log/debug (str "distance from end-game " x-distance " " y-distance))
 
     (cond
       (= end-game-0 pos) nil
       (> y-distance x-distance) (move-down pos)
       :default (move-right pos))))
 
-(defn- game-ended? [pos end-game]
-  (= pos end-game))
 
-(defn- update-position [pos {:keys [move value]} board-size]
-  (cond
-    (= move :right) (inc pos)
-    (= move :down) (+ pos board-size))
-  )
-
-(defn- consider-piece [piece-position end-game board-size]
+(defn- consider-piece [piece end-game board-size]
   (let [end-game-0 (end-game 0)]
 
-    (loop [moves-remaining  3
-           pos              piece-position
-           instructions     []]
-
-      (if (or (= moves-remaining 0)
-              (game-ended? pos end-game-0))
-        instructions
-        (let [next-move (find-next-move pos end-game-0 board-size)]
-          (when-not (nil? next-move)
-            (recur (dec moves-remaining)
-                   (update-position pos next-move board-size)
-                   (conj instructions next-move))))))
+    (find-next-move piece end-game-0 board-size)
     ))
 
-(defn pick-furthest-piece [pieces]
-  (:pos (nth (sort-by :distance > pieces) 0)))
+(defn- pick-furthest-piece [pieces]
+  (nth (sort-by :distance > pieces) 0))
+
+(defn- at-destination? [piece]
+  (nil? (:distance piece))
+  )
+
+(defn- game-ended? [{:keys [pieces]}]
+  (every? at-destination? pieces)
+  )
 
 (defn- update-pieces [board-size position destination]
   (let [x-distance (x-distance-between position destination board-size)
@@ -77,11 +64,42 @@
 (defn create-thinker [ai-colour state]
   (think {:ai-colour ai-colour} state))
 
-(defn play-turn [{:keys [ai-state pieces]}]
-  (let [current-turn (:current-turn ai-state)
-        end-game (current-turn (:end-game ai-state))]
+(defn- update-pos [pos move board-size]
+  (cond
+    (= move :right) (inc pos)
+    (= move :down) (+ pos board-size))
+  )
 
-    (consider-piece (pick-furthest-piece pieces) end-game (:size ai-state))))
+(defn- update-position [{:keys [pos move]} board-size piece]
+  (if (= pos (:pos piece))
+    (update piece :pos update-pos move board-size)
+    piece))
+
+(defn- move-pieces [pieces next-move board-size]
+  (map (partial update-position next-move board-size) pieces)
+  )
+
+(defn play-turn [{:keys [ai-state pieces] :as ai}]
+  (let [current-turn (:current-turn ai-state)
+        end-game (current-turn (:end-game ai-state))
+        board-size (:size ai-state)]
+
+    (loop [moves-remaining  3
+           ps                pieces
+           instructions     []]
+
+      (if (or (= moves-remaining 0)
+              (game-ended? ai))
+        instructions
+        (let [piece-to-move (pick-furthest-piece ps)
+              next-move     (consider-piece piece-to-move
+                                            end-game
+                                            board-size)]
+          (if (nil? next-move)
+            instructions
+            (recur (dec moves-remaining)
+                   (move-pieces ps next-move board-size)
+                   (conj instructions next-move))))))))
 
 ;-----
 ;"h1h3:g1g3:h2f2"
