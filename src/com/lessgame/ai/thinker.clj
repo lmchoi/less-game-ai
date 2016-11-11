@@ -26,10 +26,12 @@
   (assoc (move-down pos) :value 2))
 
 (defn- jump-right? [pos all-piece]
-  (some #(= (inc pos) %) all-piece))
+  (and (some #(= (inc pos) %) all-piece)
+       (not (some #(= (+ pos 2) %) all-piece))))
 
 (defn- jump-down? [pos all-piece board-size]
-  (some #(= (+ pos board-size) %) all-piece))
+  (and (some #(= (+ pos board-size) %) all-piece)
+       (not (some #(= (+ pos (* board-size 2)) %) all-piece))))
 
 (defn- consider-piece [{:keys [pos]} ai-state]
   (let [current-turn (:current-turn ai-state)
@@ -49,14 +51,15 @@
            (jump-down? pos all-pieces board-size))
         (jump-down pos)
 
-      (= end-game-0 pos)
-        nil
-
-      (> y-distance x-distance)
+      (and (> y-distance 0)
+           (> y-distance x-distance))
         (move-down pos)
 
-      :default
+      (> x-distance 0)
         (move-right pos)
+
+      :default
+        nil
       )))
 
 (defn- pick-furthest-piece [pieces]
@@ -110,11 +113,11 @@
       (if (or (= moves-remaining 0)
               (game-ended? ai))
         instructions
-        (let [piece-to-move (pick-furthest-piece ps)
+        (let [piece-to-move (pick-furthest-piece ps)        ; FIXME-MC consider the value of the move before making the move
               next-move     (consider-piece piece-to-move
                                             ai-state)]
           (if (nil? next-move)
-            instructions
+            instructions ; FIXME-MC consider other pieces before returning???
             (recur (dec moves-remaining)
                    (move-pieces ps next-move board-size)
                    (conj instructions next-move))))))))

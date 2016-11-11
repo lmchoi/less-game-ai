@@ -125,7 +125,17 @@
                                                                                    {:pos 7 :distance 0}
                                                                                    {:pos 5 :distance 0}
                                                                                    {:pos 4 :distance 0}]})
-         #_(fact "move the piece furthest away first"
+
+         (fact "jump to the right first"
+               (ai/play-turn (assoc ai-state :ai-state (assoc state :yellow [0 1 3 4])))
+               => (contains {:cost 1 :move :right :pos 0 :value 2}))
+
+         (fact "jump down if jump right is not possible due to occupied cell"
+               (ai/play-turn (assoc ai-state :ai-state (assoc state :yellow [0 1 2 3])))
+               => (contains {:cost 1 :move :down :pos 0 :value 2}))
+
+
+         (fact "move the piece furthest away first"
                (ai/play-turn ai-state) => [{:cost 1 :move :right :pos 0 :value 2}
                                            {:cost 1 :move :down  :pos 1 :value 2}
                                            {:cost 1 :move :right :pos 3 :value 2}]))
